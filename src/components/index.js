@@ -1,2 +1,2 @@
-export { Quiz } from './Quiz.jsx';
+export { Quiz } from './Quiz';
 export { Question } from './Question';

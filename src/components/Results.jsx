@@ -1,8 +1,9 @@
 import React from 'react';
 import { Card, CardContent, Typography, Container, List, ListItem, ListItemText } from '@mui/material';
+import { MIN_PASS_SCORE } from '../constants/quiz';
 
-const Results = ({ results, score, totalQuestions }) => {
-  const passed = score >= 15;
+export const Results = ({ results, score, totalQuestions }) => {
+  const passed = score >= MIN_PASS_SCORE;
 
   return (
     <Container style={{
@@ -13,7 +14,7 @@ const Results = ({ results, score, totalQuestions }) => {
       top: '80px',
       bottom: '20px',
       background: 'inherit',
-      overflow: 'auto'
+      overflow: 'auto',
     }}>
       <Card>
         <CardContent>
@@ -39,5 +40,3 @@ const Results = ({ results, score, totalQuestions }) => {
     </Container>
   );
 };
-
-export { Results };

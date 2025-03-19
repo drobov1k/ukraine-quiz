@@ -1,17 +1,8 @@
-import React, {Fragment} from 'react';
+import React, { Fragment } from 'react';
 import { Card, CardContent, Typography, RadioGroup, FormControlLabel, Radio, Button } from '@mui/material';
+import { getResultColor } from '../utils/question';
 
-const Question = ({ question, index, selectedOption, handleOptionChange, handleSubmit, result }) => {
-  const getResultColor = () => {
-    if (result === 'correct') {
-      return 'green';
-    } else if (result === 'incorrect') {
-      return 'red';
-    } else {
-      return '';
-    }
-  };
-
+export const Question = ({ question, index, selectedOption, handleOptionChange, handleSubmit, result }) => {
   return (
     <Card style={{ marginBottom: '20px', width: '400px' }}>
       <CardContent>
@@ -40,7 +31,7 @@ const Question = ({ question, index, selectedOption, handleOptionChange, handleS
             variant="h6"
             style={{
               marginTop: '10px',
-              color: getResultColor(),
+              color: getResultColor(result),
               fontWeight: 'bold',
               textAlign: 'center',
             }}
@@ -52,5 +43,3 @@ const Question = ({ question, index, selectedOption, handleOptionChange, handleS
     </Card>
   );
 };
-
-export { Question };

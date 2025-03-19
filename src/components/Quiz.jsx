@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { questions as questionsData } from '../data';
+import MenuIcon from '@mui/icons-material/Menu';
+import { Typography, Container, IconButton, Drawer, List, ListItem, ListItemText } from '@mui/material';
 import { Question } from './Question';
 import { Results } from './Results';
-import { Type } from '../App';
-import MenuIcon from '@mui/icons-material/Menu';
-import {Typography, Container, IconButton, Drawer, List, ListItem, ListItemText} from '@mui/material';
+import { QuizType } from '../constants/quiz';
+import { formatTime, shuffleArray } from '../utils/common';
+import { questions as questionsData } from '../data';
 
-const Quiz = ({ type }) => {
+export const Quiz = ({ type }) => {
   const [questions, setQuestions] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
@@ -23,12 +24,15 @@ const Quiz = ({ type }) => {
 
   useEffect(() => {
     let selectedQuestions;
-    if (type === Type.PART) {
+    if (type === QuizType.Part) {
       selectedQuestions = shuffleArray(questionsData).slice(0, 20);
     } else {
       selectedQuestions = shuffleArray(questionsData);
     }
-    setQuestions(selectedQuestions);
+    setQuestions(selectedQuestions.map((question) => ({
+      ...question,
+      options: shuffleArray(question.options),
+    })));
   }, [type]);
 
   useEffect(() => {
@@ -41,15 +45,6 @@ const Quiz = ({ type }) => {
       setShowResults(true);
     }
   }, [timeLeft]);
-
-  const shuffleArray = (array) => {
-    const shuffled = array.slice();
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-  };
 
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value);
@@ -70,8 +65,8 @@ const Quiz = ({ type }) => {
         question: questions[currentQuestion].question,
         selectedOption,
         correctAnswer: questions[currentQuestion].answer,
-        isCorrect
-      }
+        isCorrect,
+      },
     ]);
 
     setTimeout(() => {
@@ -85,12 +80,6 @@ const Quiz = ({ type }) => {
     }, 1000);
   };
 
-  const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
-  };
-
   if (questions.length === 0) {
     return <div>Loading...</div>;
   }
@@ -99,9 +88,17 @@ const Quiz = ({ type }) => {
     return <Results results={results} score={score} totalQuestions={questions.length} />;
   }
 
+  const getBackgroundColor = (index) => {
+    const result = results.find((res) => res.question === questions[index].question);
+    if (result) {
+      return result.isCorrect ? 'rgba(0, 255, 0, 0.2)' : 'rgba(255, 0, 0, 0.2)';
+    }
+    return 'transparent';
+  };
+
   return (
     <Container style={{ padding: 0, boxSizing: 'content-box' }}>
-      {type === Type.ALL && (
+      {type === QuizType.All && (
         <IconButton
           onClick={toggleDrawer(true)}
           style={{
@@ -114,7 +111,7 @@ const Quiz = ({ type }) => {
           <MenuIcon />
         </IconButton>
       )}
-      {type === Type.PART && (
+      {type === QuizType.Part && (
         <Typography variant="h5" style={{ textAlign: 'center', margin: '20px 0' }}>
           Час: {formatTime(timeLeft)}
         </Typography>
@@ -130,7 +127,12 @@ const Quiz = ({ type }) => {
       <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
         <List style={{ width: '250px' }}>
           {questions.map((question, index) => (
-            <ListItem button key={index} onClick={() => setCurrentQuestion(index)}>
+            <ListItem
+              button
+              key={index}
+              onClick={() => setCurrentQuestion(index)}
+              style={{ backgroundColor: getBackgroundColor(index) }}
+            >
               <ListItemText primary={`Q${index + 1}: ${question.question}`} />
             </ListItem>
           ))}
@@ -139,5 +141,3 @@ const Quiz = ({ type }) => {
     </Container>
   );
 };
-
-export { Quiz };
