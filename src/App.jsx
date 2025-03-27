@@ -10,11 +10,11 @@ import { default as TelegramIcon } from './assets/telegram-svgrepo-com.svg';
 
 function App() {
   const [selected, setSelected] = useState(null);
-  const [_test, setTest] = useState('');
+  const [test, setTest] = useState('');
   const [time, setTime] = useState('');
   const [questions, setQuestions] = useState('');
   const [passingRate, setPassingRate] = useState('');
-  
+
   const [isAccurateSettings, setAccurateSettings] = useState(false);
   
   const mobile = isMobile();
@@ -37,27 +37,26 @@ function App() {
         <FormControl style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 1, justifySelf: 'anchor-center', width: '360px' }}>
           <InputLabel id="test-type-label">Вибір тесту</InputLabel>
           <Select
-            disabled
             variant="outlined"
             labelId="test-type-label"
-            value={1}
+            value={test}
             onChange={handleTestChange}
             label="Вибір тесту"
           >
-            <MenuItem value={1}>Тестування знань Конституції України</MenuItem>
-            <MenuItem value={2}>Ты лох</MenuItem>
+            <MenuItem value={1}>Конституція України</MenuItem>
+            <MenuItem value={2}>Історія України</MenuItem>
           </Select>
         </FormControl>
       ) : null}
       {selected ? <Button variant="contained" color="error" style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 1 }} onClick={() => setSelected(null)}>На головну</Button> : null}
       <div style={overlayStyle} />
       <div style={{ zIndex: 1 }}>
-        {selected ? <Quiz type={selected} /> : (
+        {selected ? <Quiz type={selected} test={test} /> : (
           <>
             <h3>Обери опцію навчання:</h3>
             <Stack spacing={2} direction={mobile ? 'column' : 'row'} alignContent="center" justifyContent="center">
-              <Button variant="contained" onClick={() => handleSelect(QuizType.Part)}>Імітація реального тесту</Button>
-              <Button variant="outlined" onClick={() => handleSelect(QuizType.All)}>Всі питання</Button>
+              <Button disabled={!test} variant="contained" onClick={() => handleSelect(QuizType.Part)}>Імітація реального тесту</Button>
+              <Button disabled={!test} variant="outlined" onClick={() => handleSelect(QuizType.All)}>Всі питання</Button>
               <Button disabled startIcon={<BuildIcon />} value="Точна настройка тесту" aria-label="Точна настройка тесту" onClick={() => setAccurateSettings(true)}>
                 Точна настройка тесту
               </Button>

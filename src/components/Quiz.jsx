@@ -5,9 +5,9 @@ import { Question } from './Question';
 import { Results } from './Results';
 import { QuizType } from '../constants/quiz';
 import { formatTime, shuffleArray } from '../utils/common';
-import { questions as questionsData } from '../data';
+import * as tests from '../data';
 
-export const Quiz = ({ type }) => {
+export const Quiz = ({ type, test }) => {
   const [questions, setQuestions] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
@@ -23,17 +23,18 @@ export const Quiz = ({ type }) => {
   };
 
   useEffect(() => {
+    const qData = tests[`test${test}`];
     let selectedQuestions;
     if (type === QuizType.Part) {
-      selectedQuestions = shuffleArray(questionsData).slice(0, 20);
+      selectedQuestions = shuffleArray(qData).slice(0, 20);
     } else {
-      selectedQuestions = shuffleArray(questionsData);
+      selectedQuestions = shuffleArray(qData);
     }
     setQuestions(selectedQuestions.map((question) => ({
       ...question,
       options: shuffleArray(question.options),
     })));
-  }, [type]);
+  }, [type, test]);
 
   useEffect(() => {
     if (timeLeft > 0) {
